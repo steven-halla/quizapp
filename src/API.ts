@@ -1,30 +1,27 @@
 import {shuffleArray} from "./utils";
+import {Difficulty} from "./Difficulty";
 
-export type Question = {
-    category: string;
-    correct_answer: string;
-    difficulty: string;
-    incorrect_answers: string[];
-    question: string;
-    type: string;
+export interface Question {
+  category: string;
+  correct_answer: string;
+  difficulty: string;
+  incorrect_answers: string[];
+  question: string;
+  type: string;
 }
 
-export type QuestionState = Question & { answers: string[] };
-
-export enum Difficulty {
-    EASY = "easy",
-    MEDIUM = "medium",
-    HARD = "hard",
+export interface QuestionState extends Question {
+  answers: string[];
 }
 
-export const fetchQuizQuestions =async (amount: number, difficulty: Difficulty) => {
-    const endpoint = `https://opentdb.com/api.php?amount=${amount}&difficulty=${difficulty}&type=multiple`;
-    const data = await (await fetch(endpoint)).json();
-    return data.results.map((question: Question) => ({
-            ...question,
-            answers: shuffleArray([
-                ...question.incorrect_answers,
-                question.incorrect_answers,
-            ]),
-        }));
+export const fetchQuizQuestions = async (amount: number, difficulty: Difficulty): Promise<QuestionState[]> => {
+  const endpoint = `https://opentdb.com/api.php?amount=${amount}&difficulty=${difficulty}&type=multiple`;
+  const data = await (await fetch(endpoint)).json();
+  return data.results.map((question: Question): QuestionState => ({
+    ...question,
+    answers: shuffleArray([
+      ...question.incorrect_answers,
+      question.correct_answer,
+    ]),
+  }));
 };
