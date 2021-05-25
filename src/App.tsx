@@ -1,12 +1,65 @@
-import React, {useState} from 'react';
+import React, {FC, useState} from 'react';
 
 import {fetchQuizQuestions, QuestionState} from "./API";
 import {QuestionCard} from "./components/QuestionCard";
 import {Difficulty} from "./Difficulty";
-// import QuestionCard from `./components/QuestionCard`;
+import styled from "styled-components";
+import Button from '@material-ui/core/Button';
+
+const StyledApp = styled.div`
+  &.app {    
+    width: 100%;
+    height: 100vh;
+    padding: 15px;
+    display: flex;
+    flex: 1 1 auto;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    background-image: url('beach-quotes.jpeg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: black;
+  }
+
+  .score {
+    font-size: 2rem;
+    margin: 0px;
+  }
+
+  .quiz-title {
+    font-size: 2rem;
+    font-family: Verdana;
+  }
+
+  .start-quiz-button {
+    min-width: 200px;
+    background-color: darkred;
+    color: #ffffff;
+
+    &:hover {
+      filter: brightness(90%);
+      background-color: darkred;
+    }
+  }
+
+  .next-question-button {
+    margin: 4px;
+    min-width: 200px;
+    background-color: aqua;
+    color: #ffffff;
+
+    &:hover {
+      filter: brightness(90%);
+      background-color: aqua;
+    }
+  }
+`
 
 
-export type AnswerObject = {
+export interface AnswerObject {
   question: string;
   answer: string;
   correct: boolean;
@@ -14,7 +67,7 @@ export type AnswerObject = {
 }
 
 const TOTAL_QUESTIONS = 10;
-const App = () => {
+export const App: FC = () => {
 
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState<QuestionState[]>([]);
@@ -75,13 +128,18 @@ const App = () => {
   };
 
   return (
-    <div className="App">
-      <h1>React Quiz</h1>
+    <StyledApp className="app">
+      <p className="quiz-title">React Quiz</p>
       {gameOver || userAnswers.length === TOTAL_QUESTIONS ? (
 
-        <button className="start" onClick={startTrivia}>
+        <Button
+          className="start-quiz-button"
+          variant="contained"
+          color="default"
+          onClick={startTrivia}
+        >
           Start
-        </button>
+        </Button>
       ) : null}
 
       {!gameOver ? <p className="score"> Score: {score}</p> : null}
@@ -98,12 +156,17 @@ const App = () => {
       )}
 
       {!gameOver && !loading && userAnswers.length === questionNumber + 1 && questionNumber !== TOTAL_QUESTIONS - 1 ? (
-        <button className="next" onClick={nextQuestion}>
+        <Button
+          className="next-question-button"
+          variant="contained"
+          color="default"
+          onClick={nextQuestion}
+        >
           Next Question
-        </button>
+        </Button>
       ) : null}
 
-    </div>
+    </StyledApp>
   );
 };
 
